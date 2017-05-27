@@ -1,4 +1,4 @@
-ArrayList <Particle> p = new ArrayList <Particle>(); // chnged to arrayList
+ArrayList <Particle> p = new ArrayList <Particle>(); // changed to arrayList
 ArrayList <Particle> ionized = new ArrayList <Particle>();
 Electron[] el;
 boolean isIonizing = true;
@@ -14,7 +14,7 @@ void setup() {
     float angle = map( i, 0, atomicNum, 0, TWO_PI);
     float x = originX + (cos(angle) * random(0, radius / 3));
     float y = originY + (sin(angle) * random(0, radius / 3));
-    p.add(new Particle(x, y, random(-100, 100)));
+    p.add(new Particle(x, y, random(-100, 100), originX, originY, 0));
   }
   for (int i = 0; i < el.length; i++) {
     float angle = map(i, 0, el.length, 0, TWO_PI);
@@ -30,15 +30,28 @@ void draw() {
   for (Particle part : p) {
     part.update();
     part.show();
-    if (isIonizing) {
-      if (frameCount % timer == 0) {
-        println(nextNeutron);
-        ionized.add(p.get(nextNeutron));
-        for (int i = 0; i < ionized.size(); i++) {
-          part.ionizing(ionized.get(i));
-        }
-      }
-    }
+    //if (isIonizing) {
+    //  if (frameCount % timer == 0) {
+    //    println(nextNeutron);
+    //    ionized.add(p.get(nextNeutron));
+    //    for (int i = 0; i < ionized.size(); i++) {
+    //      part.ionizing(ionized.get(i));
+    //    }
+    //  }
+    //}
+  }
+  //adding the ions there should be a limit
+  if (frameCount% timer == 0) {
+    ionized.add(new Particle(random(originX * 0.8, originX), random(originY * 0.8, originY), 0, originX, originY, 0));
+  }
+  for (Particle ion : ionized) {
+    ion.update();
+    ion.show();
+    ion.ionizing(ion);
+    ion.radiation(ion, mouseX, mouseY);
+  }
+  if (ionized.size() > 40) {
+    
   }
   for (Electron e : el) {
     PVector force = e.attract(e);
@@ -47,9 +60,9 @@ void draw() {
     e.show();
   }
   // removing the extra neutron
-  if (frameCount % timer == 0) {
-    nextNeutron ++;
-    if (isIonizing) p.remove(nextNeutron);
-  }
-  if (nextNeutron > 40)isIonizing = false;
+  //if (frameCount % timer == 0) {
+  //  if (isIonizing) p.remove(nextNeutron);
+  //  nextNeutron ++;
+  //}
+  //if (nextNeutron > 40)isIonizing = false;
 }
