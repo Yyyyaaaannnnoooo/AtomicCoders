@@ -41,7 +41,6 @@ class Particle {
   void ionizing(Particle p) {
     int colorReduction = constrain(ionizingFactor, 0, 255);
     float alphaSin = map(sin(sinFactor), -1, 1, 100, 255);
-    println(alphaSin);
     p.c = color(0 + colorReduction, 255 - colorReduction, 255 - colorReduction, alphaSin);
     if (ionizingFactor > 300)radiation(p);
   }

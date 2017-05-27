@@ -24,15 +24,15 @@ class Electron {
   void update() {
     velocity.add(acceleration); // Velocity changes according to acceleration
     position.add(velocity);     // position changes according to velocity
-    acceleration.mult(.01);
+    acceleration.mult(.1);
+    println(position);
     trail[count % trail.length] = new PVector(position.x, position.y, position.z);
     count++;
   }
 
-  // Draw the Planet
+  // Draw the Electro
   void show() {
     noStroke(); 
-
     pushMatrix(); 
     noFill(); 
     strokeWeight(2); 
