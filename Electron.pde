@@ -4,7 +4,7 @@ class Electron {
   PVector position;
   PVector velocity;
   PVector acceleration;
-  float mass;
+  float mass, G = .4;
   int count = 0;
   PVector[] trail = new PVector[50];
   Electron(float m, float x, float y, float z) {
@@ -13,7 +13,15 @@ class Electron {
     velocity = new PVector(1, 0);   // Arbitrary starting velocity
     acceleration = new PVector(0, 0);
   }
-
+  PVector attract(Electron e) {
+    PVector target = new PVector(originX, originY, 0);
+    PVector force = PVector.sub(target, e.position);    // Calculate direction of force
+    float d = force.mag();                              // Distance between objects
+    d = constrain(d, 0, 2.0);                                       // Limiting the distance to eliminate "extreme" results for very close or very far objects
+    float strength = (G * mass * 2) / (d * d);      // Calculate gravitional force magnitude
+    force.setMag(strength);                              // Get force vector --> magnitude * direction
+    return force;
+  }
   // Newton's 2nd Law (F = M*A) applied
   void applyForce(PVector force) {
     PVector f = PVector.div(force, mass);
@@ -25,12 +33,11 @@ class Electron {
     velocity.add(acceleration); // Velocity changes according to acceleration
     position.add(velocity);     // position changes according to velocity
     acceleration.mult(.1);
-    println(position);
     trail[count % trail.length] = new PVector(position.x, position.y, position.z);
     count++;
   }
 
-  // Draw the Electro
+  // Draw the Electron
   void show() {
     noStroke(); 
     pushMatrix(); 

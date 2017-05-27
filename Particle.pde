@@ -10,14 +10,7 @@ class Particle {
     vel = new PVector(0, 0, 0);
   }
 
-  PVector attract(Electron e) {
-    PVector force = PVector.sub(target, e.position);    // Calculate direction of force
-    float d = force.mag();                              // Distance between objects
-    d = constrain(d, 0, 2.0);                                       // Limiting the distance to eliminate "extreme" results for very close or very far objects
-    float strength = (G * mass * e.mass) / (d * d);      // Calculate gravitional force magnitude
-    force.setMag(strength);                              // Get force vector --> magnitude * direction
-    return force;
-  }
+
   void update() {
     PVector dir = PVector.sub(target, pos);
     dir.normalize();
@@ -38,12 +31,14 @@ class Particle {
     ellipse(pos.x, pos.y, r * 2, r * 2);
     popMatrix();
   }
+  //ionizing function the particle gets excited
   void ionizing(Particle p) {
     int colorReduction = constrain(ionizingFactor, 0, 255);
     float alphaSin = map(sin(sinFactor), -1, 1, 100, 255);
     p.c = color(0 + colorReduction, 255 - colorReduction, 255 - colorReduction, alphaSin);
     if (ionizingFactor > 300)radiation(p);
   }
+  //the ionized particle is shot to a target
   void radiation(Particle p) {
     PVector hitTarget = new PVector(0, 0);
     PVector dir = PVector.sub(hitTarget, p.pos);
