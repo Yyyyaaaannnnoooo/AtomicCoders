@@ -3,6 +3,7 @@ class Particle {
   float speed = 5, G = .4, mass = 5.0, sinFactor = 0;
   int r = 7, ionizingFactor = 0;
   color c;
+  boolean removeParticle = false;
   //position and target of the particle
   Particle(float posX, float posY, float posZ, float trX, float trY, float trZ) {
     c = color(0, 255, 255, 75);
@@ -20,7 +21,7 @@ class Particle {
     vel.add(acc);
     vel.limit(speed);
     pos.add(vel);
-    if (frameCount > 200)ionizingFactor++;
+    ionizingFactor += 10;
     sinFactor += 0.1;
   }
 
@@ -46,7 +47,15 @@ class Particle {
     dir.mult(1);
     p.acc = dir;
     p.vel.add(p.acc);
-    p.vel.limit(5);
+    p.vel.limit(50);
     p.pos.add(vel);
+    removeParticle = hit(p, hitTarget);
+  }
+  //removing the particle who hitted the target
+  boolean hit(Particle p, PVector hitted) {
+    boolean isHit = false;
+    float d = p.pos.dist(hitted);
+    if (d < 2)isHit = true;
+    return isHit;
   }
 }

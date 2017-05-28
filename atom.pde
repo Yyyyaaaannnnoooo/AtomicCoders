@@ -1,8 +1,8 @@
 ArrayList <Particle> p = new ArrayList <Particle>(); // changed to arrayList
 ArrayList <Particle> ionized = new ArrayList <Particle>();
 Electron[] el;
-boolean isIonizing = true;
-int w = 1200, h = 900, nextNeutron = 3, atomicNum = 195, timer = 30;
+boolean isIonizing = false;
+int w = 1200, h = 900, nextNeutron = 3, atomicNum = 195, timer = 30, currentNeutron = 0;
 float radius = 250;
 float originX = w * 0.8, originY = h / 2; //defining the origin of the Atom
 void settings() {
@@ -30,28 +30,27 @@ void draw() {
   for (Particle part : p) {
     part.update();
     part.show();
-    //if (isIonizing) {
-    //  if (frameCount % timer == 0) {
-    //    println(nextNeutron);
-    //    ionized.add(p.get(nextNeutron));
-    //    for (int i = 0; i < ionized.size(); i++) {
-    //      part.ionizing(ionized.get(i));
-    //    }
-    //  }
-    //}
   }
   //adding the ions there should be a limit
-  if (frameCount% timer == 0) {
-    ionized.add(new Particle(random(originX * 0.8, originX), random(originY * 0.8, originY), 0, originX, originY, 0));
+  if (frameCount % timer == 0) {
+    ionized.add(new Particle(random(originX * 0.95, originX), random(originY * 0.95, originY), 0, originX, originY, 0));
   }
-  for (Particle ion : ionized) {
+  for (int i = ionized.size() - 1; i >= 0; i--) {
+    Particle ion = ionized.get(i);
     ion.update();
     ion.show();
     ion.ionizing(ion);
-    ion.radiation(ion, mouseX, mouseY);
+    //if (frameCount > 300) {
+    //  ion.radiation(ion, mouseX, mouseY);
+    //}
+    if (ion.removeParticle)ionized.remove(i);
   }
-  if (ionized.size() > 40) {
-    
+  if (frameCount % timer * 2 == 0)isIonizing = true;
+
+  if (isIonizing) {
+    Particle i = ionized.get(currentNeutron);
+    hitTheBody(mouseX, mouseY, i);
+    isIonizing = false;
   }
   for (Electron e : el) {
     PVector force = e.attract(e);
@@ -59,10 +58,9 @@ void draw() {
     e.update();
     e.show();
   }
-  // removing the extra neutron
-  //if (frameCount % timer == 0) {
-  //  if (isIonizing) p.remove(nextNeutron);
-  //  nextNeutron ++;
-  //}
-  //if (nextNeutron > 40)isIonizing = false;
+}
+void hitTheBody(float posX, float posY, Particle p) {
+  println("hit");
+  p.radiation(p, posX, posY);
+  currentNeutron++;
 }
