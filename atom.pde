@@ -31,8 +31,8 @@ void draw() {
     part.update();
     part.show();
   }
-  //adding the ions there should be a limit
-  if (frameCount % timer == 0) {
+  //adding the ions with limit of 40 units
+  if (frameCount % timer == 0 && ionized.size() < 4) {
     ionized.add(new Particle(random(originX * 0.95, originX), random(originY * 0.95, originY), 0, originX, originY, 0));
   }
   for (int i = ionized.size() - 1; i >= 0; i--) {
@@ -40,17 +40,19 @@ void draw() {
     ion.update();
     ion.show();
     ion.ionizing(ion);
-    //if (frameCount > 300) {
-    //  ion.radiation(ion, mouseX, mouseY);
-    //}
-    if (ion.removeParticle)ionized.remove(i);
   }
-  if (frameCount % timer * 2 == 0)isIonizing = true;
+  // maybe more time between the ions shooting
+  if (frameCount % timer == 0)isIonizing = true;
 
   if (isIonizing) {
-    Particle i = ionized.get(currentNeutron);
-    hitTheBody(mouseX, mouseY, i);
-    isIonizing = false;
+    Particle i = ionized.get(currentNeutron % ionized.size());
+    println(i.pos);
+    i.radiation(i, mouseX, mouseY);
+    if (i.removeParticle) {
+      ionized.remove(currentNeutron % ionized.size());
+      currentNeutron++;
+      isIonizing = false;
+    }
   }
   for (Electron e : el) {
     PVector force = e.attract(e);

@@ -47,15 +47,16 @@ class Particle {
     dir.mult(1);
     p.acc = dir;
     p.vel.add(p.acc);
-    p.vel.limit(50);
+    p.vel.limit(5);
     p.pos.add(vel);
+    println(p.pos);
     removeParticle = hit(p, hitTarget);
   }
   //removing the particle who hitted the target
   boolean hit(Particle p, PVector hitted) {
     boolean isHit = false;
     float d = p.pos.dist(hitted);
-    if (d < 2)isHit = true;
+    if (d < 5)isHit = true;
     return isHit;
   }
 }
