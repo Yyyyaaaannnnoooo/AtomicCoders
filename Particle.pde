@@ -1,7 +1,8 @@
 class Particle {
   PVector pos, target, vel, acc;
-  float speed = 5, G = .4, mass = 5.0, sinFactor = 0;
-  int r = 7, ionizingFactor = 0;
+  PVector[] trail = new PVector[10];
+  float speed = 5, G = .4, mass = 5.0, sinFactor = 0, sinCounter = 0;
+  int r = 7, ionizingFactor = 0, count = 0;
   color c;
   boolean removeParticle = false;
   //position and target of the particle
@@ -32,6 +33,14 @@ class Particle {
     pushMatrix();
     ellipse(pos.x, pos.y, r * 2, r * 2);
     popMatrix();
+    for (int i = 0; i < constrain(count, 0, trail.length); i++) {
+      float sze = 10;
+      pushMatrix();
+      translate(trail[i].x, trail[i].y);
+      fill(255, map(i, 0, trail.length, 255, 55));
+      ellipse(0, 0, sze, sze);
+      popMatrix();
+    }
   }
   //ionizing function the particle gets excited
   void ionizing(Particle p) {
@@ -49,14 +58,34 @@ class Particle {
     p.vel.add(p.acc);
     p.vel.limit(5);
     p.pos.add(vel);
-    println(p.pos);
+    //PVector angle = PVector.fromAngle(sin(sinCounter), hitTarget);
+    //angle.mult(2);
+    //p.pos.add(angle);
+    //sinCounter += .5;
+    trail[count % trail.length] = new PVector(p.pos.x, p.pos.y);
+    count++;
     removeParticle = hit(p, hitTarget);
   }
   //removing the particle who hitted the target
   boolean hit(Particle p, PVector hitted) {
     boolean isHit = false;
     float d = p.pos.dist(hitted);
+    println(d);
     if (d < 5)isHit = true;
     return isHit;
+  }
+  //animation when the target has been hitted
+  void targetIsHitted(PVector p, int radius) {
+    noFill();
+    stroke(0, 255, 0);
+    strokeWeight(2);
+    beginShape(POINTS);
+    for (int i = 0; i < 8; i ++) {
+      float angle = map ( i, 0, 8, 0, TWO_PI);
+      float x = p.x + (cos(angle) * radius);
+      float y = p.y + (sin(angle) * radius);
+      vertex(x, y);
+    }
+    endShape();
   }
 }

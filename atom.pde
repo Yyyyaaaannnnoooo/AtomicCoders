@@ -1,8 +1,10 @@
-ArrayList <Particle> p = new ArrayList <Particle>(); // changed to arrayList
+ArrayList <Particle> p = new ArrayList <Particle>(); // change back normal object array
 ArrayList <Particle> ionized = new ArrayList <Particle>();
 Electron[] el;
-boolean isIonizing = false;
+PVector hitPos = new PVector();
+boolean isIonizing = false, hitted = false;
 int w = 1200, h = 900, nextNeutron = 3, atomicNum = 195, timer = 30, currentNeutron = 0;
+int targetRadius = 5;
 float radius = 250;
 float originX = w * 0.8, originY = h / 2; //defining the origin of the Atom
 void settings() {
@@ -32,7 +34,7 @@ void draw() {
     part.show();
   }
   //adding the ions with limit of 40 units
-  if (frameCount % timer == 0 && ionized.size() < 4) {
+  if (frameCount % timer == 0 && ionized.size() < 40) {
     ionized.add(new Particle(random(originX * 0.95, originX), random(originY * 0.95, originY), 0, originX, originY, 0));
   }
   for (int i = ionized.size() - 1; i >= 0; i--) {
@@ -46,23 +48,28 @@ void draw() {
 
   if (isIonizing) {
     Particle i = ionized.get(currentNeutron % ionized.size());
-    println(i.pos);
     i.radiation(i, mouseX, mouseY);
     if (i.removeParticle) {
+      hitted = true;
+      hitPos = i.pos;
       ionized.remove(currentNeutron % ionized.size());
       currentNeutron++;
       isIonizing = false;
     }
+    if (hitted) {//correct this    
+      i.targetIsHitted(hitPos, targetRadius);
+      targetRadius += 2;
+      if (targetRadius > 50) {
+        hitted = false;
+        targetRadius = 5;
+      }
+    }
   }
+
   for (Electron e : el) {
     PVector force = e.attract(e);
     e.applyForce(force);
     e.update();
     e.show();
   }
-}
-void hitTheBody(float posX, float posY, Particle p) {
-  println("hit");
-  p.radiation(p, posX, posY);
-  currentNeutron++;
 }
