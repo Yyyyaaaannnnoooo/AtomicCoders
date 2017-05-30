@@ -70,7 +70,6 @@ class Particle {
   boolean hit(Particle p, PVector hitted) {
     boolean isHit = false;
     float d = p.pos.dist(hitted);
-    println(d);
     if (d < 5)isHit = true;
     return isHit;
   }

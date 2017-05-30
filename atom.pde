@@ -1,22 +1,33 @@
-ArrayList <Particle> p = new ArrayList <Particle>(); // change back normal object array
+Particle[] p; // change back normal object array
 ArrayList <Particle> ionized = new ArrayList <Particle>();
 Electron[] el;
 PVector hitPos = new PVector();
 boolean isIonizing = false, hitted = false;
 int w = 1200, h = 900, nextNeutron = 3, atomicNum = 195, timer = 30, currentNeutron = 0;
 int targetRadius = 5;
+///loading icon made with icon maker
+int cell = 5;
+int wGrid = 450, hGrid = 900;
+int cols = wGrid / cell, rows = hGrid / cell;
+int[][] grid = new int[cols][rows];
 float radius = 250;
 float originX = w * 0.8, originY = h / 2; //defining the origin of the Atom
+PImage man, liver, heart;
 void settings() {
   size(w, h, P3D);
 }
 void setup() {
-  el = new Electron[20]; 
-  for (int i = 0; i < atomicNum; i++) {
+  loadIcon();
+  man = loadImage("icon.png");
+  liver = loadImage("liver.png");
+  heart = loadImage("heart.png");
+  el = new Electron[20];
+  p = new Particle [atomicNum];
+  for (int i = 0; i < p.length; i++) {
     float angle = map( i, 0, atomicNum, 0, TWO_PI);
     float x = originX + (cos(angle) * random(0, radius / 3));
     float y = originY + (sin(angle) * random(0, radius / 3));
-    p.add(new Particle(x, y, random(-100, 100), originX, originY, 0));
+    p[i] = new Particle(x, y, random(-100, 100), originX, originY, 0);
   }
   for (int i = 0; i < el.length; i++) {
     float angle = map(i, 0, el.length, 0, TWO_PI);
@@ -29,6 +40,20 @@ void setup() {
 void draw() {
   ortho();
   background(0);
+  for (int x = 0; x < cols; x ++) {
+    for (int y = 0; y < rows; y ++) {
+      if (grid[x][y] == 0) {
+        fill(255);
+        rect(x * cell, y * cell, cell, cell);
+      }
+    }
+  } 
+  image(heart, mouseX, mouseY);
+ // image(man, 0, 0);
+  //int mposX = mouseX;
+  //stroke(255);
+  //line(mposX, 0, mposX, height);
+  //println(mposX);
   for (Particle part : p) {
     part.update();
     part.show();
@@ -71,5 +96,14 @@ void draw() {
     e.applyForce(force);
     e.update();
     e.show();
+  }
+}
+void loadIcon() {
+  String[] loadedIcon = loadStrings("icon.txt");
+  for (int x = 0; x < cols; x ++) {
+    for (int y = 0; y < rows; y ++) {
+      int index = x + cols * y;
+      grid[x][y] = int(loadedIcon[index]);
+    }
   }
 }
