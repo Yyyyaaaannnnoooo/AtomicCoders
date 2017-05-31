@@ -9,6 +9,7 @@ class Icon {
     pos = new PVector(posX, posY);
     if (i == 2) {
       isDancing =true;
+      ///need to correct this whan changing the icons name
       for (int j = 0; j < dancingGuy.length; j++) {
         int index = j + 2;
         dancingGuy[j] = loadImage("icon_"+index+".png");

@@ -7,6 +7,7 @@ class Paddle {
   }
   void update(float posY) {
     y = posY;
+    if (h <= 20)h = 20;
   }
   void show() {
     fill(255);

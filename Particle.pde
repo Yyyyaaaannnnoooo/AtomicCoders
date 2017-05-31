@@ -24,12 +24,10 @@ class Particle {
     vel.limit(speed);
     pos.add(vel);
     ionizingFactor += 10;
-    sinFactor += 0.1;
+    sinFactor += 0.07;
   }
 
   void show() {
-    //stroke(0);
-    strokeWeight(.3);
     fill(c);
     pushMatrix();
     ellipse(pos.x, pos.y, r * 2, r * 2);
@@ -38,7 +36,7 @@ class Particle {
       float sze = 10;
       pushMatrix();
       translate(trail[i].x, trail[i].y);
-      fill(255, map(i, 0, trail.length, 255, 55));
+      fill(0, 255, 255, map(i, 0, trail.length, 255, 55));
       ellipse(0, 0, sze, sze);
       popMatrix();
     }
@@ -46,8 +44,8 @@ class Particle {
   //ionizing function the particle gets excited
   void ionizing(Particle p) {
     int colorReduction = constrain(ionizingFactor, 0, 255);
-    float alphaSin = map(sin(sinFactor), -1, 1, 100, 255);
-    p.c = color(0 + colorReduction, 255 - colorReduction, 255 - colorReduction, alphaSin);
+    float alphaSin = map(sin(sinFactor), -1, 1, 150, 255);
+    p.c = color(255 - ionizingFactor % 255, 0, 0, alphaSin);
   }
   //the ionized particle is shot to a target
   void radiation(Particle p, Paddle pad) {
@@ -60,8 +58,11 @@ class Particle {
     p.pos.add(vel);
     trail[count % trail.length] = new PVector(p.pos.x, p.pos.y);
     count++;
-    if (p.pos.x < pad.x + pad.w && p.pos.x > pad.x - pad.w && p.pos.y > pad.y - pad.h && p.pos.y < pad.y + pad.h) {
+    if (p.pos.x < pad.x + pad.w && p.pos.x > pad.x - pad.w && p.pos.y > pad.y - pad.h / 2 && p.pos.y < pad.y + pad.h / 2) {
       p.removeParticle = true;
+      pad.h -= 5;
+      paddleHit = minim.loadFile("output_02.mp3");
+      paddleHit.play();
     }
   }
   //removing the particle who hitted the target
