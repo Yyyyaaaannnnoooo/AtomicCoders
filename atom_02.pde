@@ -92,7 +92,7 @@ void draw() {
         ic.update(i);
       }
       i.radiation(i, paddle);
-      if (i.pos.x > paddle.x - 50 && i.pos.x < paddle.x - 30) {
+      if (i.pos.x > paddle.x - 40 && i.pos.x < paddle.x - 30) {
         iconHit = minim.loadFile("output_01.mp3");
         iconHit.play();
       }
