@@ -5,6 +5,7 @@ class Particle {
   int r = 7, ionizingFactor = 0, count = 0;
   color c;
   boolean removeParticle = false;
+  PVector hitTarget = new PVector(-10, random(-200, height + 200));
   //position and target of the particle
   Particle(float posX, float posY, float posZ, float trX, float trY, float trZ) {
     c = color(0, 255, 255, 75);
@@ -49,8 +50,7 @@ class Particle {
     p.c = color(0 + colorReduction, 255 - colorReduction, 255 - colorReduction, alphaSin);
   }
   //the ionized particle is shot to a target
-  void radiation(Particle p, float targetX, float targetY) {
-    PVector hitTarget = new PVector(targetX, targetY);
+  void radiation(Particle p, Paddle pad) {
     PVector dir = PVector.sub(hitTarget, p.pos);
     dir.normalize();
     dir.mult(1);
@@ -58,13 +58,11 @@ class Particle {
     p.vel.add(p.acc);
     p.vel.limit(5);
     p.pos.add(vel);
-    //PVector angle = PVector.fromAngle(sin(sinCounter), hitTarget);
-    //angle.mult(2);
-    //p.pos.add(angle);
-    //sinCounter += .5;
     trail[count % trail.length] = new PVector(p.pos.x, p.pos.y);
     count++;
-    removeParticle = hit(p, hitTarget);
+    if (p.pos.x < pad.x + pad.w && p.pos.x > pad.x - pad.w && p.pos.y > pad.y - pad.h && p.pos.y < pad.y + pad.h) {
+      p.removeParticle = true;
+    }
   }
   //removing the particle who hitted the target
   boolean hit(Particle p, PVector hitted) {
