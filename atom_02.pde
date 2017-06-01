@@ -138,7 +138,7 @@ void draw() {
 void gameOver() {
   minim.stop();
   pushMatrix();
-  translate(0, 0, 10);
+  translate(0, 0, 200);
   rectMode(CORNER);
   textAlign(CENTER);
   fill(0);
