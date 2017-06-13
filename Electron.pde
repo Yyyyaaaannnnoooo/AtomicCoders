@@ -43,15 +43,14 @@ class Electron {
     pushMatrix(); 
     noFill(); 
     strokeWeight(2); 
-    stroke(155, 155, 0); 
-    //beginShape();
+    stroke(155, 155, 0);
     for (int i = 0; i < constrain(count, 0, trail.length); i++) {
       point(trail[i].x, trail[i].y, trail[i].z);
     }
     translate(position.x, position.y, position.z); 
     noStroke(); 
-    fill(155, 155, 0); 
-    ellipse(0, 0, 10, 10); 
+    color c = color(155, 155, 0); 
+    pixelCircle(0, 0, c); 
     popMatrix();
   }
 }

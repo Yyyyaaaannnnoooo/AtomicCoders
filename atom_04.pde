@@ -14,9 +14,9 @@ int targetRadius = 5, hittedIcons;
 ///grid for the icons
 int cell = 50;
 int wGrid = 450, hGrid = 900;
-int cols = wGrid / cell, rows = hGrid / cell;
+int vertices = 20, ellipses = 5;
 float radius = 250;
-float originX = w * 0.8, originY = h / 2; //defining the origin of the Atom
+float originX = w * 0.5, originY = h * 0.5; //defining the origin of the Atom
 PImage man;
 void settings() {
   size(w, h, P3D);
@@ -28,7 +28,7 @@ void setup() {
   paddle = new Paddle();
   //nucleus of the atom
   p = new Particle [atomicNum];
-  for (int i = 0; i < p.length; i++) {
+  for (int i = 0; i < atomicNum; i++) {
     float angle = map( i, 0, atomicNum, 0, TWO_PI);
     float x = originX + (cos(angle) * random(0, radius / 3));
     float y = originY + (sin(angle) * random(0, radius / 3));
@@ -43,11 +43,15 @@ void setup() {
     el[i] = new Electron(5.0, x, y, random(-100, 100));
   }
   ///positioning the icons on a grid structure
-  icon = new Icon[cols * rows];
-  for (int x = 0; x < cols; x++) {
-    for (int y = 0; y < rows; y++) {
-      int i = x + cols * y;
-      icon[i] = new Icon(floor(random(1, 8)), x * 50 + 50 / 2, y * 50 + 50 / 2);
+  int i = 0;
+  icon = new Icon[vertices * ellipses];
+  for (int y = 0; y < vertices; y++) {
+    for (int x = 0; x < ellipses; x++) {
+      float angle = map(y, 0, vertices, 0, TWO_PI);
+      float xx = (width * 0.5) + cos(angle) * (radius + (x * 50));
+      float yy = (height * 0.5) + sin(angle) * (radius + (x * 50));
+      icon[i] = new Icon(floor(random(1, 8)), xx, yy);
+      i++;
     }
   }
   background(0);
@@ -62,8 +66,8 @@ void draw() {
     if (keyPressed)gamestart = false;
   } else {
     ///PADDLE DEFEND THE LIVING///
-    paddle.show();
     paddle.update(mouseY);
+    paddle.show();
     ///FROM HERE ON PARTICLE STUFF////
     for (Icon i : icon) {
       i.show();
@@ -125,7 +129,7 @@ void draw() {
     for (int i = 0; i < icon.length; i++) {
       if (icon[i].hitted == true)hittedIcons++;
     }
-    float prctg = map(hittedIcons, 0, cols * rows, 0, 100);
+    float prctg = map(hittedIcons, 0, vertices * ellipses, 0, 100);
     textAlign(CORNER);
     fill(255);
     textSize(72);
@@ -150,6 +154,17 @@ void gameOver() {
   text("PRESS SPACE BAR TO EXIT", width * 0.5, height * 0.45);
   popMatrix();
   gameover = true;
+}
+
+void pixelCircle( float x, float y, color c) {
+  pushMatrix();
+  noStroke();
+  fill(c);
+  rectMode(CENTER);
+  for ( int i = 0; i < 2; i++) {
+    rect(x, y, 10 + (i * 10), 20 - (i * 10));
+  }
+  popMatrix();
 }
 
 void keyPressed() {
